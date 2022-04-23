@@ -22,12 +22,14 @@ namespace StatsCounter.Services
             _httpClient = httpClient;
         }
 
-        public  Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
+        public async Task<IEnumerable<RepositoryInfo>> GetRepositoryInfosByOwnerAsync(string owner)
         {
 
             var url = $"{owner}/repos";
-            var task =  _httpClient.GetFromJsonAsync<IEnumerable<RepositoryInfo>>(url);
-            return task;
+            var response = await _httpClient.GetAsync(url);
+            var contentString = await response.Content.ReadAsStringAsync();
+            var repoInfo = JsonConvert.DeserializeObject<IEnumerable<RepositoryInfo>>(contentString);
+            return repoInfo;
 
         }
     }

@@ -12,7 +12,7 @@ namespace StatsCounter.Extensions
         {
             services.AddHttpClient<IGitHubService, GitHubService>(x =>
             {
-                x.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("github", "1"));
+                x.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("github", "kamczata"));
                 x.BaseAddress = baseApiUrl;
             }
             ); 

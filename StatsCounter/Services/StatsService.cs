@@ -22,20 +22,32 @@ namespace StatsCounter.Services
 
         public async Task<RepositoryStats> GetRepositoryStatsByOwnerAsync(string owner)
         {
-            var stats = new RepositoryStats();
             var repositories = await _gitHubService.GetRepositoryInfosByOwnerAsync(owner);
+
             var letters = new Dictionary<char, int>();
 
-           /* foreach(var repo in repositories)
+            var names = repositories.Select(x => x.Name.ToLower());
+            var namesString = String.Join("", names);
+            var disctinctLetters = (from str in names
+                                    from c in str
+                                    select c).Distinct().ToList();
+            disctinctLetters.Sort();
+
+            foreach (var letter in disctinctLetters)
             {
+                letters[letter] = namesString.Where(x => x == letter).Count();
+            }
 
-            }*/
-
-            stats.Owner = owner;
-            stats.AvgStargazers = repositories.Average(x => x.StargazersCount);
-            stats.AvgWatchers = repositories.Average(x => x.WatchersCount);
-            stats.AvgSize = repositories.Average(x => x.Size);
-            stats.AvgForks = repositories.Average(x => x.ForksCount);
+            var stats = new RepositoryStats()
+            {
+                Owner = owner,
+                Letters = letters,
+                AvgStargazers = repositories.Average(x => x.StargazersCount),
+                AvgWatchers = repositories.Average(x => x.WatchersCount),
+                AvgSize = repositories.Average(x => x.Size),
+                AvgForks = repositories.Average(x => x.ForksCount)
+        };
+            
 
             return stats;
         }
